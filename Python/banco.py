@@ -1,4 +1,13 @@
-menu = """
+from banco_funcao import *
+
+menu_1 = """
+    
+    [1] Criar usuário
+    [2] Criar Conta
+    [3] Entrar na conta
+"""
+
+menu_2 = """
     [E] Extrato
     [D] Depósito
     [S] Saque
@@ -11,21 +20,38 @@ num_saques= 0
 limite_diario= 3
 extrato= ""
 
+
 while True:
     print("Bem vindo! Escolha abaixo suas opções:")
-    opcao= input(menu)
+    opcao= input(menu_1)
+
+    if opcao== "1":
+        print("-Vamos criar seu usuário-")
+        usuario= criar_user()
+        print ("-Seu usuário foi criado!-", usuario)
+    
+    elif opcao == "2":
+        
+        conta_user= criar_conta(usuario)
+
+        print ("--Conta criada com sucesso--")
+        print (f">>Agência: {conta_user['agnc']}")
+        print (f">>Número Conta: {conta_user['num_conta']}")
+        print (f">>CPF: {conta_user['cpf']}")
+    elif opcao== "3":
+        login_conta(usuario, conta_user)
+        break
+
+
+while True:
+    print("Bem vindo! Escolha abaixo suas opções:")
+    opcao= input(menu_2)
 
     if opcao== "d":
         print("-DEPÓSITO-")
         deposito= float(input("Digite o valor a ser depositado:"))
-
-        if deposito>0:
-            saldo += deposito
-            extrato += f"Depósito= R$ {deposito:.2f}\n"
-            print("---Depósito relizado com sucesso---")
-        else:
-            print("---Digite um valor válido---")
-
+        saldo, extrato= depositar (saldo, deposito, extrato)
+        
     elif opcao== "s":
         print("-SAQUE-")
         saque= float(input("Digite o valor a ser sacado:"))
@@ -34,25 +60,11 @@ while True:
         sem_saque= num_saques >= limite_diario
         sem_limite= limite_saque < saque
 
-        if sem_saldo:
-            print("---Saldo insuficiente para transação---")
-        elif sem_saque:
-            print("---Você ultrapassou seu limite diário de saques---")
-        elif sem_limite:
-            print(f"---O valor ultrapassa seu limite para saques. Seu limite atual é: R$ {limite_saque} ---")
-        elif saque>0:
-            saldo-= saque
-            num_saques += 1
-            extrato += f"Saque= R$ {saque:.2f}\n"
-            print("---Saque realizado com sucesso---")
-        else:
-            print("---Digite um valor válido---")
-   
-    elif opcao == "e":
-        print("-EXTRATO-")
-        print("Não houve movimentações" if not extrato else extrato)
-        print(f"Seu saldo atual é de: R$ {saldo:.2f}")
+        saldo, extrato = sacar (saldo, limite_saque, num_saques, extrato, saque, sem_saldo, sem_saque, sem_limite)
     
+    elif opcao == "e":
+        saldo, extrato = extrair (saldo, extrato)
+        
     elif opcao== "q":
         break
 
